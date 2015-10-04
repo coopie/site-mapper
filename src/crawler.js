@@ -1,16 +1,18 @@
 var Promise = require('bluebird');
-var request = require('request');
-// var request = Promise.promisify(request);
 var http = require('http');
+var htmlparser2 = require('htmlparser2');
+
+var handler = new htmlparser2.DefaultHandler(function(error, dom) {
+    console.log('dom : ', dom);
+});
+var parser = new htmlparser2.Parser(handler, {decodeEntries: true});
 
 function crawl(url) {
-    // http.get(url, function(response) {
-    //
-    //     response.on('data', function(data) {
-    //         console.log(data.toString());
-    //     });
-    // });
-    return getData(url);
+
+    return getData(url)
+    .then(function(data) {
+        return parser.parseComplete(data.toString());
+    });
 }
 
 function getData(url) {

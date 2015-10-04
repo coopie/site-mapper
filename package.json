@@ -23,6 +23,7 @@
   "homepage": "https://github.com/coopie/site-mapper#readme",
   "dependencies": {
     "bluebird": "^2.10.2",
+    "htmlparser2": "^3.8.3",
     "istanbul": "^0.3.21",
     "mocha": "^2.3.3",
     "request": "^2.64.0"
