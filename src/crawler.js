@@ -26,11 +26,12 @@ function crawl(website) {
         .then(function(data) {
 
             parser.parseComplete(data.toString());
-            var links = domInspector.extractLinksFromDom(handler.dom).filter(fromDomain);
+            var links = domInspector.extractLinksFromDom(handler.dom);
+            var internalLinks = links.filter(fromDomain);
             graph[path] = links;
 
             console.log('finished ', pageUrl);
-            return Promise.all(links.map(function(link) {
+            return Promise.all(internalLinks.map(function(link) {
                 link = url.parse(link).path || '/';
 
                 if (graph[link]) {
@@ -71,7 +72,7 @@ function getData(pageUrl) {
                 fulfill('');
             }
         });
-    }).timeout(5000)
+    }).timeout(20000)
     .catch(function(error) {
         return '';
     });
