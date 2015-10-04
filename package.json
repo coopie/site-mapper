@@ -1,0 +1,30 @@
+{
+  "name": "site-mapper",
+  "version": "1.0.0",
+  "description": "A simple site mapper",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coopie/site-mapper.git"
+  },
+  "keywords": [
+    "crawler",
+    "mapper"
+  ],
+  "author": "Sam Coope",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/coopie/site-mapper/issues"
+  },
+  "homepage": "https://github.com/coopie/site-mapper#readme",
+  "dependencies": {
+    "bluebird": "^2.10.2",
+    "istanbul": "^0.3.21",
+    "mocha": "^2.3.3",
+    "request": "^2.64.0"
+  }
+}
