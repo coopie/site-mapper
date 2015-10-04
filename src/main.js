@@ -8,7 +8,8 @@ if (process.argv <= 2) {
 
 crawler.crawl(process.argv[2])
 .then(function(map) {
-    console.log('SUCCESS!: ', JSON.stringify(map, undefined, 2));
+    console.log('SUCCESS!: ', JSON.stringify(map, undefined, 2), 'fin');
+    process.exit();
 }).catch(function(error) {
     console.log('ERROR: ', error);
 });

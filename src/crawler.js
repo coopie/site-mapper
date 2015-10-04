@@ -14,7 +14,7 @@ function crawl(website) {
         '/': []
     };
 
-    return crawlPage(website)
+    return crawlPage('/')
     .then(function() {
         return graph;
     });
@@ -22,17 +22,16 @@ function crawl(website) {
     function crawlPage(pageUrl) {
         console.log('crawling ', pageUrl);
         var path = url.parse(pageUrl).path;
-        return getData(pageUrl)
+        return getData(linkify(pageUrl))
         .then(function(data) {
 
             parser.parseComplete(data.toString());
             var links = domInspector.extractLinksFromDom(handler.dom).filter(fromDomain);
             graph[path] = links;
 
+            console.log('finished ', pageUrl);
             return Promise.all(links.map(function(link) {
-                if (link[0] !== '/') {
-                    link = '/' + link;
-                }
+                link = url.parse(link).path || '/';
 
                 if (graph[link]) {
                     return Promise.resolve();
@@ -69,9 +68,12 @@ function getData(pageUrl) {
             if (!error && response.statusCode == 200) {
                 fulfill(body);
             } else {
-                reject(error);
+                fulfill('');
             }
         });
+    }).timeout(5000)
+    .catch(function(error) {
+        return '';
     });
 }
 
