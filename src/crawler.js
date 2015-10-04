@@ -1,5 +1,5 @@
 var Promise = require('bluebird');
-var http = require('http');
+var request = require('request');
 var htmlparser2 = require('htmlparser2');
 var Set = require('node-set');
 var _ = require('lodash');
@@ -17,13 +17,12 @@ function crawl(url) {
 
 function getData(url) {
     return new Promise(function(fulfill, reject) {
-        http.get(url, function(response) {
-            response.on('data', function(data) {
-                fulfill(data);
-            });
-        })
-        .on('error', function(error) {
-            reject(error);
+        request.get(url, function(error, response, body) {
+            if (!error && response.statusCode == 200) {
+                fulfill(body);
+            } else {
+                reject(error);
+            }
         });
     });
 }
