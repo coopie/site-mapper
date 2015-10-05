@@ -26,13 +26,13 @@ function crawl(website) {
         .then(function(data) {
             parser.parseComplete(data.toString());
             var pageInfo = domInspector.inspect(handler.dom);
+            graph[path] = pageInfo;
 
             var links = pageInfo.links;
             if (links) {
                 links = links.map(removeTrailingSlash);
-                var internalLinks = links.filter(fromDomain).map(addLeadingSlash);
-                graph[path].links = links;
 
+                var internalLinks = links.filter(fromDomain).map(addLeadingSlash);
                 console.log('finished ', pageUrl);
                 return Promise.all(internalLinks.map(function(link) {
                     link = url.parse(link).path || '/';

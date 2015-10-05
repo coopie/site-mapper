@@ -1,13 +1,14 @@
 var _ = require('lodash');
 
 var inspectors = [
-    inspectLinks
+    inspectLinks,
+    inspectImages
 ];
 
 function inspect(dom) {
     var pageInfo = inspectHelper(dom, {});
     Object.keys(pageInfo).forEach(function(infoType) {
-        pageInfo.infoType = _.unique(pageInfo.infoType);
+        pageInfo[infoType] = _.unique(pageInfo[infoType]);
     });
     return pageInfo;
 
@@ -33,6 +34,18 @@ function inspectLinks(pageAttributes, domNode) {
             pageAttributes.links.push(href);
         } else {
             pageAttributes.links = [href];
+        }
+    }
+}
+
+function inspectImages(pageAttributes, domNode) {
+    if (domNode.name && domNode.name === 'img' &&
+        domNode.attribs) {
+        var image = domNode.attribs;
+        if (pageAttributes.images) {
+            pageAttributes.images.push(image);
+        } else {
+            pageAttributes.images = [image];
         }
     }
 }
