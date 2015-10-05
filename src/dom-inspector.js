@@ -3,7 +3,8 @@ var _ = require('lodash');
 var inspectors = [
     inspectLinks,
     inspectImages,
-    inspectScript
+    inspectScript,
+    inspectText
 ];
 
 function inspect(dom) {
@@ -59,6 +60,20 @@ function inspectScript(pageAttributes, domNode) {
             pageAttributes.scripts.push(script);
         } else {
             pageAttributes.scripts = [script];
+        }
+    }
+}
+
+function inspectText(pageAttributes, domNode) {
+    var textTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'];
+    if (domNode.type && domNode.type === 'text' &&
+        domNode.parent && domNode.parent && _.contains(textTags, domNode.parent.name) &&
+        domNode.data && domNode.data.match(/\S/)) {
+        var text = domNode.data;
+        if (pageAttributes.text) {
+            pageAttributes.text.push(text);
+        } else {
+            pageAttributes.text = [text];
         }
     }
 }
