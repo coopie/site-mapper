@@ -2,7 +2,8 @@ var _ = require('lodash');
 
 var inspectors = [
     inspectLinks,
-    inspectImages
+    inspectImages,
+    inspectScript
 ];
 
 function inspect(dom) {
@@ -40,12 +41,24 @@ function inspectLinks(pageAttributes, domNode) {
 
 function inspectImages(pageAttributes, domNode) {
     if (domNode.name && domNode.name === 'img' &&
-        domNode.attribs) {
+        domNode.attribs && !_.isEmpty(domNode.attribs)) {
         var image = domNode.attribs;
         if (pageAttributes.images) {
             pageAttributes.images.push(image);
         } else {
             pageAttributes.images = [image];
+        }
+    }
+}
+
+function inspectScript(pageAttributes, domNode) {
+    if (domNode.type && domNode.type === 'script' &&
+        domNode.attribs && !_.isEmpty(domNode.attribs)) {
+        var script = domNode.attribs;
+        if (pageAttributes.scripts) {
+            pageAttributes.scripts.push(script);
+        } else {
+            pageAttributes.scripts = [script];
         }
     }
 }
