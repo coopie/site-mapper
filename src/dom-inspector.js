@@ -1,23 +1,42 @@
 var _ = require('lodash');
 
-function extractLinksFromDom(dom) {
-    return _.unique(extractLinksFromDomHelper(dom));
+var inspectors = [
+    inspectLinks
+];
 
-    function extractLinksFromDomHelper(dom) {
-        return dom.reduce(function(links, domNode) {
-            if (domNode.name && domNode.name === 'a' &&
-                domNode.attribs && domNode.attribs.href) {
-                links.push(domNode.attribs.href);
-            }
+function inspect(dom) {
+    var pageInfo = inspectHelper(dom, {});
+    Object.keys(pageInfo).forEach(function(infoType) {
+        pageInfo.infoType = _.unique(pageInfo.infoType);
+    });
+    return pageInfo;
+
+    function inspectHelper(dom, pageAttributes) {
+        return dom.reduce(function(pageAttributes, domNode) {
+            inspectors.forEach(function(inspector) {
+                inspector(pageAttributes, domNode);
+            });
 
             if (domNode.children) {
-                links = links.concat(extractLinksFromDomHelper(domNode.children));
+                pageAttributes = inspectHelper(domNode.children, pageAttributes);
             }
-            return links;
-        }, []);
+            return pageAttributes;
+        }, pageAttributes);
+    }
+}
+
+function inspectLinks(pageAttributes, domNode) {
+    if (domNode.name && domNode.name === 'a' &&
+        domNode.attribs && domNode.attribs.href) {
+        var href = domNode.attribs.href;
+        if (pageAttributes.links) {
+            pageAttributes.links.push(href);
+        } else {
+            pageAttributes.links = [href];
+        }
     }
 }
 
 module.exports = {
-    extractLinksFromDom: extractLinksFromDom
+    inspect: inspect
 };

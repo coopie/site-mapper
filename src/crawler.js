@@ -11,7 +11,7 @@ function crawl(website) {
     var href = url.parse(website).href;
 
     var graph = {
-        '/': []
+        '/': {}
     };
 
     return crawlPage('/')
@@ -24,23 +24,27 @@ function crawl(website) {
         var path = url.parse(pageUrl).path;
         return getData(linkify(pageUrl))
         .then(function(data) {
-
             parser.parseComplete(data.toString());
-            var links = domInspector.extractLinksFromDom(handler.dom);
-            var internalLinks = links.filter(fromDomain);
-            graph[path] = links;
+            var pageInfo = domInspector.inspect(handler.dom);
 
-            console.log('finished ', pageUrl);
-            return Promise.all(internalLinks.map(function(link) {
-                link = url.parse(link).path || '/';
+            var links = pageInfo.links;
+            if (links) {
+                links = links.map(removeTrailingSlash);
+                var internalLinks = links.filter(fromDomain).map(addLeadingSlash);
+                graph[path].links = links;
 
-                if (graph[link]) {
-                    return Promise.resolve();
-                } else {
-                    graph[link] = [];
-                    return crawlPage(linkify(link));
-                }
-            }));
+                console.log('finished ', pageUrl);
+                return Promise.all(internalLinks.map(function(link) {
+                    link = url.parse(link).path || '/';
+
+                    if (graph[link]) {
+                        return Promise.resolve();
+                    } else {
+                        graph[link] = {};
+                        return crawlPage(linkify(link));
+                    }
+                }));
+            }
 
         });
     }
@@ -76,6 +80,21 @@ function getData(pageUrl) {
     .catch(function(error) {
         return '';
     });
+}
+
+// Got from: http://stackoverflow.com/questions/6680825/return-string-without-trailing-slash
+function removeTrailingSlash(str) {
+    if (str.substr(-1) === '/') {
+        return str.substr(0, str.length - 1);
+    }
+    return str;
+}
+
+function addLeadingSlash(str) {
+    if (str[0] !== '/') {
+        return '/' + str;
+    }
+    return str;
 }
 
 module.exports = {

@@ -13,5 +13,5 @@ crawler.crawl(process.argv[2])
     console.log('found ', Object.keys(map).length, ' different pages, and took ', finish - start, 'ms');
     process.exit();
 }).catch(function(error) {
-    console.log('ERROR: ', error);
+    console.log('ERROR: ', error.message, '\n', error.stack);
 });
