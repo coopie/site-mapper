@@ -1,5 +1,7 @@
 var _ = require('lodash');
 
+// These are the methods which inpect dom-nodes to extract relevant information.
+// To add functionality for videos, CSS etc, add the inspection methods here
 var inspectors = [
     inspectLinks,
     inspectImages,

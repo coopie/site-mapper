@@ -10,7 +10,6 @@ if (args.length <= 2) {
 
 var pathToWriteTo = args[3] || 'site-map.json';
 
-// check url is main page n stuff
 var start = new Date();
 crawler.crawl(args[2])
 .then(function(map) {

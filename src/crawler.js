@@ -10,13 +10,13 @@ var parser = new htmlparser2.Parser(handler, {decodeEntries: true});
 function crawl(website) {
     var href = url.parse(website).href;
 
-    var graph = {
+    var siteMap = {
         '/': {}
     };
 
     return crawlPage('/')
     .then(function() {
-        return graph;
+        return siteMap;
     });
 
     function crawlPage(pageUrl) {
@@ -26,7 +26,7 @@ function crawl(website) {
         .then(function(data) {
             parser.parseComplete(data.toString());
             var pageInfo = domInspector.inspect(handler.dom);
-            graph[path] = pageInfo;
+            siteMap[path] = pageInfo;
 
             var links = pageInfo.links;
             if (links) {
@@ -37,10 +37,10 @@ function crawl(website) {
                 return Promise.all(internalLinks.map(function(link) {
                     link = url.parse(link).path || '/';
 
-                    if (graph[link]) {
+                    if (siteMap[link]) {
                         return Promise.resolve();
                     } else {
-                        graph[link] = {};
+                        siteMap[link] = {};
                         return crawlPage(linkify(link));
                     }
                 }));
@@ -61,8 +61,6 @@ function crawl(website) {
     }
 
     function fromDomain(pageUrl) {
-        // return pageUrl[0] === '/' ||
-        //     url.parse(pageUrl).href === href;
         return pageUrl[0] === '/' || !url.parse(pageUrl).hostname;
     }
 }
@@ -82,7 +80,7 @@ function getData(pageUrl) {
     });
 }
 
-// Got from: http://stackoverflow.com/questions/6680825/return-string-without-trailing-slash
+// Taken from: http://stackoverflow.com/questions/6680825/return-string-without-trailing-slash
 function removeTrailingSlash(str) {
     if (str.substr(-1) === '/') {
         return str.substr(0, str.length - 1);
